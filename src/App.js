@@ -7,7 +7,7 @@ import './App.css';
 const Relays = ({relays}) => {
   const urls = Object.keys(relays);
 
-  if(!urls.length) return <p>Noness</p>;
+  if(!urls.length) return <p>None</p>;
 
   return (
     urls.map(url =>
@@ -20,16 +20,21 @@ const Relays = ({relays}) => {
 }
 
 function App() {
+  const [nostr, setNostr] = useState();
   const [npub, setNpub] = useState("");
   const [relays, setRelays] = useState({});
 
   useEffect(() => {
-    getPublicKey();
+    setNostr(window.nostr)
   }, []);
 
   useEffect(() => {
-    getRelays();
-  }, []);
+    if(nostr) getPublicKey();
+  }, [nostr]);
+
+  useEffect(() => {
+    if(nostr) getRelays();
+  }, [nostr]);
 
   const getPublicKey = async () => {
     const publicKey = await window.nostr.getPublicKey();
@@ -41,6 +46,8 @@ function App() {
     const relays = await window.nostr.getRelays();
     setRelays(relays);
   };
+
+  if(!nostr) return <marquee>install nostr extension</marquee>
 
   return (
     <div className="App">
