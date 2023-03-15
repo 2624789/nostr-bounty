@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { nip19 } from 'nostr-tools';
+import { useNostr } from "./nostr-context";
 
 import './App.css';
 
@@ -20,40 +20,19 @@ const Relays = ({relays}) => {
 }
 
 function App() {
-  const [nostr, setNostr] = useState();
-  const [npub, setNpub] = useState("");
-  const [relays, setRelays] = useState({});
+  const { connect, state } = useNostr();
+  const { provider, publicKey, relays } = state;
 
-  useEffect(() => {
-    setNostr(window.nostr)
-  }, []);
-
-  useEffect(() => {
-    if(nostr) getPublicKey();
-  }, [nostr]);
-
-  useEffect(() => {
-    if(nostr) getRelays();
-  }, [nostr]);
-
-  const getPublicKey = async () => {
-    const publicKey = await window.nostr.getPublicKey();
-    const npub = nip19.npubEncode(publicKey)
-    setNpub(npub);
-  };
-
-  const getRelays = async () => {
-    const relays = await window.nostr.getRelays();
-    setRelays(relays);
-  };
-
-  if(!nostr) return <marquee>install nostr extension</marquee>
+  if(!provider) return <p>
+    <button type="button" onClick={connect}>Connect</button>
+    <small> nostr extension must be installed</small>
+  </p>
 
   return (
     <div className="App">
       <h1>Bounties</h1>
-      <strong>Your public key:</strong>
-      <p>{npub ? npub : "None"}</p>
+      <strong>Your public key is:</strong>
+      <p>{publicKey ? publicKey : "None"}</p>
       <strong>Your relays:</strong>
       <Relays relays={relays} />
     </div>

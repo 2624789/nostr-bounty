@@ -4,10 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { NostrContextProvider } from "./nostr-context";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <NostrContextProvider>
+      <App />
+    </NostrContextProvider>
   </React.StrictMode>
 );
 
