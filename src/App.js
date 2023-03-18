@@ -1,27 +1,32 @@
-import { useState, useEffect } from 'react';
-
 import { useNostr } from "./nostr-context";
 
 import './App.css';
 
-const Relays = ({relays}) => {
+const Relays = () => {
+  const { connectToRelay, state } = useNostr();
+  const { relays, connectedRelay } = state;
+
   const urls = Object.keys(relays);
 
   if(!urls.length) return <p>None</p>;
 
-  return (
-    urls.map(url =>
-      <p key={url}>
-        {url} - read: {JSON.stringify(relays[url].read)},
-        write: {JSON.stringify(relays[url].write)}
-      </p>
-    )
-  );
+  return (urls.map(url =>
+    <p key={url}>
+      {url} - read: {JSON.stringify(relays[url].read)},
+      write: {JSON.stringify(relays[url].write)}{' '}
+      {url !== connectedRelay?.url
+        ? <button type="button" onClick={() => connectToRelay(url)}>
+            connect
+          </button>
+        : <strong> connected</strong>
+      }
+    </p>
+  ));
 }
 
 function App() {
   const { loadNostr, state } = useNostr();
-  const { provider, publicKey, relays } = state;
+  const { provider, publicKey } = state;
 
   if(!provider) return <p>
     <button type="button" onClick={loadNostr}>Load Nostr</button>
@@ -34,7 +39,7 @@ function App() {
       <strong>Your public key is:</strong>
       <p>{publicKey ? publicKey : "None"}</p>
       <strong>Your relays:</strong>
-      <Relays relays={relays} />
+      <Relays/>
     </div>
   );
 }

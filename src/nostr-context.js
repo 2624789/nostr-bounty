@@ -5,27 +5,33 @@ import React, {
   useReducer
 } from 'react';
 
-import { nip19 } from 'nostr-tools';
+import { nip19, relayInit } from 'nostr-tools';
 
 const initialState = {
   publicKey: "",
   relays: [],
   provider: undefined,
+  connectedRelay: undefined,
 }
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CONNECTED_RELAY':
+      return { ...state, connectedRelay: action.payload }
     case 'SET_PUBLIC_KEY':
       return { ...state, publicKey: action.payload }
     case 'SET_RELAYS':
       return { ...state, relays: action.payload }
     case 'SET_PROVIDER':
       return { ...state, provider: action.payload }
+    default:
+      return { ...state }
   }
 }
 
 const defaultContext = {
   state: initialState,
+  connectToRelay: async () => {},
   loadNostr: async () => {},
 }
 
@@ -33,7 +39,7 @@ const NostrContext = createContext(defaultContext);
 
 const NostrContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { provider, publicKey } = state;
+  const { provider, connectedRelay } = state;
 
   useEffect(() => {
     if(provider && provider === window.nostr) {
@@ -44,6 +50,7 @@ const NostrContextProvider = ({children}) => {
       console.error("Something is overwriting provider.");
     }
 
+    return () => {if (connectedRelay) connectedRelay.close()};
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
@@ -63,8 +70,26 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_RELAYS', payload: relays});
   }
 
+  const connectToRelay = async url => {
+    if (connectedRelay) {
+      connectedRelay.close()
+      dispatch({type: 'SET_CONNECTED_RELAY', payload: undefined});
+    }
+
+    const relay = relayInit(url);
+
+    relay.on('connect', () => {
+      dispatch({type: 'SET_CONNECTED_RELAY', payload: relay});
+    });
+    relay.on('error', () => {
+      dispatch({type: 'SET_CONNECTED_RELAY', payload: undefined});
+    });
+
+    await relay.connect();
+  }
+
   return (
-    <NostrContext.Provider value={{state, loadNostr}}>
+    <NostrContext.Provider value={{state, loadNostr, connectToRelay}}>
       {children}
     </NostrContext.Provider>
   )
