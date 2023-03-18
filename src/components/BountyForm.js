@@ -2,11 +2,12 @@ import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-import { useNostrState } from "./../nostr-context";
+import { useNostr } from "./../nostr-context";
 
 const BountyForm = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const { connectedRelay, provider } = useNostrState();
+  const { state, getBounties } = useNostr();
+  const { connectedRelay, provider } = state;
   const [pubResponse, setPubResponse] = useState("");
 
   const onSubmit = async(data) => {
@@ -24,6 +25,7 @@ const BountyForm = () => {
       let pub = connectedRelay.publish(signedEvent);
       pub.on('ok', () => {
         setPubResponse(`${connectedRelay.url} has published our bounty`);
+        getBounties();
         reset();
       })
       pub.on('failed', reason => {

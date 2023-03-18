@@ -12,10 +12,13 @@ const initialState = {
   relays: [],
   provider: undefined,
   connectedRelay: undefined,
+  bounties: [],
 }
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_BOUNTIES':
+      return { ...state, bounties: action.payload }
     case 'SET_CONNECTED_RELAY':
       return { ...state, connectedRelay: action.payload }
     case 'SET_PUBLIC_KEY':
@@ -54,6 +57,11 @@ const NostrContextProvider = ({children}) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
+  useEffect(() => {
+    if(!connectedRelay) return;
+    getBounties();
+  }, [connectedRelay]);
+
   const loadNostr = async () => {
     const provider = window.nostr;
     dispatch({type: 'SET_PROVIDER', payload: provider});
@@ -85,8 +93,16 @@ const NostrContextProvider = ({children}) => {
     await relay.connect();
   }
 
+  const getBounties = async() => {
+    const bounties = await connectedRelay.list([{
+      "kinds": [1],
+      "#t": ["bounty"]
+    }]);
+    dispatch({type: 'SET_BOUNTIES', payload: bounties.reverse()});
+  }
+
   return (
-    <NostrContext.Provider value={{state, loadNostr, connectToRelay}}>
+    <NostrContext.Provider value={{state, loadNostr, connectToRelay, getBounties}}>
       {children}
     </NostrContext.Provider>
   )
