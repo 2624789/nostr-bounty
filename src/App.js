@@ -20,11 +20,11 @@ const Relays = ({relays}) => {
 }
 
 function App() {
-  const { connect, state } = useNostr();
+  const { loadNostr, state } = useNostr();
   const { provider, publicKey, relays } = state;
 
   if(!provider) return <p>
-    <button type="button" onClick={connect}>Connect</button>
+    <button type="button" onClick={loadNostr}>Load Nostr</button>
     <small> nostr extension must be installed</small>
   </p>
 

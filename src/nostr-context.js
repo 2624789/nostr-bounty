@@ -11,7 +11,6 @@ const initialState = {
   publicKey: "",
   relays: [],
   provider: undefined,
-  connect: () => {},
 }
 
 const reducer = (state, action) => {
@@ -27,7 +26,7 @@ const reducer = (state, action) => {
 
 const defaultContext = {
   state: initialState,
-  connect: async () => {},
+  loadNostr: async () => {},
 }
 
 const NostrContext = createContext(defaultContext);
@@ -48,7 +47,7 @@ const NostrContextProvider = ({children}) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
-  const connect = async () => {
+  const loadNostr = async () => {
     const provider = window.nostr;
     dispatch({type: 'SET_PROVIDER', payload: provider});
   };
@@ -65,7 +64,7 @@ const NostrContextProvider = ({children}) => {
   }
 
   return (
-    <NostrContext.Provider value={{state, connect}}>
+    <NostrContext.Provider value={{state, loadNostr}}>
       {children}
     </NostrContext.Provider>
   )
