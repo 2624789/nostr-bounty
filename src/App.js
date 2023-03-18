@@ -1,5 +1,6 @@
 import { useNostr } from "./nostr-context";
 
+import { Bounties } from "./components/Bounties";
 import { Relays } from "./components/Relays";
 
 import './App.css';
@@ -15,10 +16,10 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Bounties</h1>
       <strong>Your public key is:</strong>
       <p>{publicKey ? publicKey : "None"}</p>
       <Relays />
+      <Bounties />
     </div>
   );
 }
