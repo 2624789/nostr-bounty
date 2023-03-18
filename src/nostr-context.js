@@ -81,9 +81,6 @@ const NostrContextProvider = ({children}) => {
     relay.on('connect', () => {
       dispatch({type: 'SET_CONNECTED_RELAY', payload: relay});
     });
-    relay.on('error', () => {
-      dispatch({type: 'SET_CONNECTED_RELAY', payload: undefined});
-    });
 
     await relay.connect();
   }
