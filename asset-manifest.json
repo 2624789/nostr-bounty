@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/nostr-bounty/static/css/main.cdf2c088.css",
+    "main.js": "/nostr-bounty/static/js/main.c90fb5c0.js",
+    "static/js/787.fc02260f.chunk.js": "/nostr-bounty/static/js/787.fc02260f.chunk.js",
+    "index.html": "/nostr-bounty/index.html",
+    "main.cdf2c088.css.map": "/nostr-bounty/static/css/main.cdf2c088.css.map",
+    "main.c90fb5c0.js.map": "/nostr-bounty/static/js/main.c90fb5c0.js.map",
+    "787.fc02260f.chunk.js.map": "/nostr-bounty/static/js/787.fc02260f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cdf2c088.css",
+    "static/js/main.c90fb5c0.js"
+  ]
+}
