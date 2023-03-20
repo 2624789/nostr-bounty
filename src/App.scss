@@ -1,0 +1,20 @@
+@import 'styles/_variables.scss';
+
+.App {
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  max-width: 800px;
+  color: $text-color;
+  background-color: $background-color;
+  border: solid 2px $border-color;
+  border-radius: 10px;
+  text-align: center;
+
+  h1 {
+    color: $title-color;
+  }
+
+  a {
+    color: $link-color;
+  }
+}

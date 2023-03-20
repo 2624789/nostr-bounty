@@ -4,13 +4,14 @@ import { Bounties } from "./components/Bounties";
 import { NoProvider } from "./components/NoProvider";
 import { Relays } from "./components/Relays";
 
-import './App.css';
+import './App.scss';
 
 function App() {
   const { provider, publicKey } = useNostrState();
 
   return (
     <div className="App">
+      <h1>Bounties Manager</h1>
       {!provider
         ? <NoProvider />
         : <>
