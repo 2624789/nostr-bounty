@@ -1,9 +1,18 @@
 @import '../../styles/_variables.scss';
 
-.button {
-  padding: 0.5rem;
+%button {
   border-radius: 5px;
   color: $button-text-color;
   background-color: $button-background-color;
   border-color: $button-border-color;
+}
+
+.normalButton {
+  @extend %button;
+  padding: 0.5rem;
+}
+
+.smallButton {
+  @extend %button;
+  padding: 0.1rem 0.3rem;
 }
