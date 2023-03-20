@@ -10,11 +10,15 @@
   border-radius: 10px;
   text-align: center;
 
-  h1 {
+  h1, legend {
     color: $title-color;
   }
 
   a {
     color: $link-color;
+  }
+
+  fieldset {
+    margin-top: 1rem;
   }
 }

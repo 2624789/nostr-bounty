@@ -3,9 +3,7 @@ import { useNostrState } from "./../nostr-context";
 import { BountyForm } from "./BountyForm";
 
 const Bounties = () => {
-  const { connectedRelay, bounties } = useNostrState();
-
-  const status = connectedRelay ? `connected to ${connectedRelay.url}` : 'offline';
+  const { bounties } = useNostrState();
 
   const parseBountyContent = content => {
     const bounty = JSON.parse(content)
@@ -17,8 +15,6 @@ const Bounties = () => {
 
   return (
     <div>
-      <h1>Bounties Manager</h1>
-      <p><small>{status}</small></p>
       <BountyForm />
       <h2>Bounties List</h2>
       {bounties.map(bounty =>

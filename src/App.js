@@ -8,7 +8,7 @@ import { Relays } from "./components/Relays";
 import './App.scss';
 
 function App() {
-  const { provider, publicKey } = useNostrState();
+  const { provider } = useNostrState();
 
   return (
     <div className="App">

@@ -1,0 +1,60 @@
+@import '../../styles/_variables.scss';
+
+.bountyForm {
+  form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+
+    .fieldContainer {
+      display: flex;
+      max-width: 100%;
+      margin-bottom: 0.5rem;
+
+      .labelContainer {
+        width: 10%;
+        text-align: left;
+
+        label {
+          color: $form-label-color;
+        }
+      }
+
+      .inputContainer {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+
+        input { 
+          max-width: 100%
+        }
+
+        p {
+          margin: 0;
+          font-size: smaller;
+          text-align: left;
+          color: $text-color-error;
+        }
+      }
+
+      .buttonContainer {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+
+        p {
+          margin: 0.5rem 0 0 0;
+          font-size: smaller;
+
+          &.error {
+            color: $text-color-error;
+          }
+
+          &.success {
+            color: green;
+          }
+        }
+      }
+    }
+  }
+}

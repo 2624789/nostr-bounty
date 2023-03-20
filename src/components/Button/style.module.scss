@@ -5,6 +5,12 @@
   color: $button-text-color;
   background-color: $button-background-color;
   border-color: $button-border-color;
+
+  &[disabled] {
+    color: $button-disabled-text-color;
+    background-color: $button-disabled-background-color;
+    border-color: $button-disabled-border-color;
+  }
 }
 
 .normalButton {

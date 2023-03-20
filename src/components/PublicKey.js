@@ -5,7 +5,7 @@ function PublicKey() {
 
   return (publicKey
     ? <fieldset>
-        <legend style={{color: '#5461C8'}}>
+        <legend>
           <strong>Your public key is:</strong>
         </legend>
         <strong style={{color: '#ED9B33'}}>{publicKey}</strong>
