@@ -2,6 +2,7 @@ import { useNostrState } from "./nostr-context";
 
 import { Bounties } from "./components/Bounties";
 import { NoProvider } from "./components/NoProvider";
+import { PublicKey } from "./components/PublicKey";
 import { Relays } from "./components/Relays";
 
 import './App.scss';
@@ -15,8 +16,7 @@ function App() {
       {!provider
         ? <NoProvider />
         : <>
-            <strong>Your public key is:</strong>
-            <p>{publicKey ? publicKey : "None"}</p>
+            <PublicKey />
             <Relays />
             <Bounties />
           </>
