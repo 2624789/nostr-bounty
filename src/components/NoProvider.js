@@ -1,5 +1,7 @@
 import { useNostr } from "./../nostr-context";
 
+import { Button } from "./Button";
+
 const FIREFOX_EXT_LINK = 'https://diegogurpegui.com/nos2x-fox/';
 const CHROME_EXT_LINK = 'https://github.com/fiatjaf/nos2x';
 
@@ -8,9 +10,7 @@ const NoProvider = () => {
 
   return (
     <div>
-      <button type="button" onClick={loadNostr}>
-        Load Nostr Signer Extension
-      </button>
+      <Button onClick={loadNostr} label={"Load Nostr Signer Extension"} />
       <p>
         <small>
           Install for <a href={CHROME_EXT_LINK}>Chrome</a>
