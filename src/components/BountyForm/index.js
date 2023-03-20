@@ -21,7 +21,7 @@ const BountyForm = () => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [isErrorResponse]);
 
   const responseStyle = isErrorResponse ? style.error : style.success;
 
@@ -41,6 +41,7 @@ const BountyForm = () => {
 
       let pub = connectedRelay.publish(signedEvent);
       pub.on('ok', () => {
+        setIsErrorResponse(false);
         setPubResponse(`${connectedRelay.url} has published our bounty`);
         getBounties();
         reset();
