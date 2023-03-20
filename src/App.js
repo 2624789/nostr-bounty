@@ -1,25 +1,25 @@
-import { useNostr } from "./nostr-context";
+import { useNostrState } from "./nostr-context";
 
 import { Bounties } from "./components/Bounties";
+import { NoProvider } from "./components/NoProvider";
 import { Relays } from "./components/Relays";
 
 import './App.css';
 
 function App() {
-  const { loadNostr, state } = useNostr();
-  const { provider, publicKey } = state;
-
-  if(!provider) return <p>
-    <button type="button" onClick={loadNostr}>Load Nostr</button>
-    <small> nostr extension must be installed</small>
-  </p>
+  const { provider, publicKey } = useNostrState();
 
   return (
     <div className="App">
-      <strong>Your public key is:</strong>
-      <p>{publicKey ? publicKey : "None"}</p>
-      <Relays />
-      <Bounties />
+      {!provider
+        ? <NoProvider />
+        : <>
+            <strong>Your public key is:</strong>
+            <p>{publicKey ? publicKey : "None"}</p>
+            <Relays />
+            <Bounties />
+          </>
+      }
     </div>
   );
 }

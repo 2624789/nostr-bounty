@@ -60,6 +60,7 @@ const NostrContextProvider = ({children}) => {
   useEffect(() => {
     if(!connectedRelay) return;
     getBounties();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedRelay]);
 
   const loadNostr = async () => {
