@@ -1,0 +1,29 @@
+@import '../../styles/_variables.scss';
+
+.relays {
+  display: flex;
+  justify-content: center;
+}
+
+.errorText {
+  color: $text-color-error;
+}
+
+.relayList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  legend {
+    color: $title-color;
+  }
+
+  table {
+    text-align: left;
+    td {
+      .boldText {
+        color: $title-color;
+      }
+    }
+  }
+}
