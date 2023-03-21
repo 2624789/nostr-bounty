@@ -61,6 +61,7 @@ const Applications = ({applications, isAuthor, bountyId}) => {
 
   return(
     <div className={style.applications}>
+      <p className={responseStyle}><small>{pubResponse}</small></p>
       <table>
         <tbody>
           {applications.map(a =>
@@ -82,7 +83,6 @@ const Applications = ({applications, isAuthor, bountyId}) => {
                         small
                         onClick={() => assignBounty(a.pubkey)}
                       />
-                      <p className={responseStyle}><small>{pubResponse}</small></p>
                     </div>
                   : null
                 }

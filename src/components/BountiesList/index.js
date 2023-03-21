@@ -19,6 +19,7 @@ const BountyDetails = ({event, onClose}) => {
 
   useEffect(() => {
     getApplications(event.id);
+  // eslint-disable-next-line
   }, []);
 
   return(
