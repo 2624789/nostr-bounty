@@ -9,16 +9,27 @@ import { encodePubKey, parsePubKey, parseTimestamp } from "./../../utils";
 
 import style from './style.module.scss';
 
-const BountyDetails = ({event, onClose}) => {
-  const { content } = event;
+const BountyDetails = ({bounty, onClose}) => {
+  const { content } = bounty;
   const data = JSON.parse(content);
-  const { state, getApplications } = useNostr();
-  const { publicKey, applications } = state;
+  const { state, getApplications, getAssignments } = useNostr();
+  const { applications, assignments, publicKey } = state;
 
-  const isAuthor = publicKey === encodePubKey(event.pubkey);
+  const assignmentEvent = assignments[bounty.id]?.length > 0
+    ? assignments[bounty.id][0]
+    : null
+
+  const assignedTo = assignments[bounty.id]?.length > 0
+    ? parsePubKey(assignments[bounty.id][0].content)
+    : null
+
+  const assignedAt = assignments[bounty.id]?.length > 0
+    ? parseTimestamp(assignments[bounty.id][0].created_at)
+    : null
 
   useEffect(() => {
-    getApplications(event.id);
+    getApplications(bounty.id);
+    getAssignments(bounty);
   // eslint-disable-next-line
   }, []);
 
@@ -29,16 +40,26 @@ const BountyDetails = ({event, onClose}) => {
         <p>{data.terms}</p>
       </div>
       <div className={style.section}>
+        <p>
+          <strong>Assigned to</strong>{' '}
+          {assignedTo ? `${assignedTo} at ${assignedAt}` : "none yet."}
+        </p>
+      </div>
+      <div className={style.section}>
         <h4 className={style.title}>Applications</h4>
-        {applications[event.id]?.length > 0
+        {applications[bounty.id]?.length > 0
           ? <Applications
-              applications={applications[event.id]}
-              bountyId={event.id}
-              isAuthor={isAuthor}
+              applications={applications[bounty.id]}
+              bounty={bounty}
+              publicKey={publicKey}
+              assignment={assignmentEvent}
             />
           : <p>No applications yet.</p>
         }
-        {!isAuthor ? <ApplyForm bountyId={event.id} /> : null}
+        {publicKey !== encodePubKey(bounty.pubkey)
+          ? <ApplyForm bountyId={bounty.id} />
+          : null
+        }
       </div>
       <div className={style.bottom}>
         <Button
@@ -66,13 +87,13 @@ const UnknownBounty = ({content, onClose}) => {
   );
 }
 
-const Bounty = ({bountyEvent}) => {
-  const { content } = bountyEvent;
-  const bountyData = JSON.parse(content);
+const Bounty = ({bounty}) => {
+  const { content } = bounty;
+  const data = JSON.parse(content);
   const isValidBounty =
-    'title' in bountyData &&
-    'amount' in bountyData &&
-    'terms' in bountyData;
+    'title' in data &&
+    'amount' in data &&
+    'terms' in data;
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -82,9 +103,9 @@ const Bounty = ({bountyEvent}) => {
         <div className={style.left}>
           {isValidBounty
             ? <>
-                <h3 className={style.title}>{bountyData.title}</h3>
+                <h3 className={style.title}>{data.title}</h3>
                 <p className={style.amount}>
-                  <strong>{bountyData.amount} sats</strong>
+                  <strong>{data.amount} sats</strong>
                 </p>
               </>
             : <p>Unknown content format</p>
@@ -93,12 +114,12 @@ const Bounty = ({bountyEvent}) => {
         <div className={style.right}>
           <p>
             <small className={style.date}>
-              <strong>{parseTimestamp(bountyEvent.created_at)}</strong>
+              <strong>{parseTimestamp(bounty.created_at)}</strong>
             </small>
           </p>
           <p>
             <small className={style.author}>
-              by  {parsePubKey(bountyEvent.pubkey)}
+              by  {parsePubKey(bounty.pubkey)}
             </small>
           </p>
         </div>
@@ -113,7 +134,7 @@ const Bounty = ({bountyEvent}) => {
           </div>
         : isValidBounty
           ? <BountyDetails
-              event={bountyEvent}
+              bounty={bounty}
               onClose={() => setIsExpanded(false)}
             />
           : <UnknownBounty
@@ -134,7 +155,7 @@ const BountiesList = () => {
       {connectedRelay
         ? bounties.length > 0
             ? (bounties.map(bounty =>
-                <Bounty key={bounty.id} bountyEvent={bounty} />
+                <Bounty key={bounty.id} bounty={bounty} />
               ))
             : <small className={style.muted}>No bounties found.</small>
         : <small className={style.muted}>Not connected to relay</small>

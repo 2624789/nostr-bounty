@@ -9,6 +9,7 @@ import { nip19, relayInit } from 'nostr-tools';
 
 const initialState = {
   applications: {},
+  assignments: {},
   publicKey: "",
   relays: [],
   provider: undefined,
@@ -20,6 +21,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'SET_APPLICATIONS':
       return { ...state, applications: action.payload }
+    case 'SET_ASSIGNMENTS':
+      return { ...state, assignments: action.payload }
     case 'SET_BOUNTIES':
       return { ...state, bounties: action.payload }
     case 'SET_CONNECTED_RELAY':
@@ -39,6 +42,7 @@ const defaultContext = {
   state: initialState,
   connectToRelay: async () => {},
   getApplications: async () => {},
+  getAssignments: async () => {},
   getBounties: async () => {},
   loadNostr: async () => {},
 }
@@ -47,7 +51,7 @@ const NostrContext = createContext(defaultContext);
 
 const NostrContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { applications, connectedRelay, provider } = state;
+  const { applications, assignments, connectedRelay, provider } = state;
 
   useEffect(() => {
     if(provider && provider === window.nostr) {
@@ -120,9 +124,30 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_APPLICATIONS', payload: newApplications});
   }
 
+  const getAssignments = async (bounty) => {
+    const assignmentsList = await connectedRelay.list([{
+      "authors": [bounty.pubkey],
+      "kinds": [1],
+      "#e": [bounty.id],
+      "#t": ["bounty-assignment"],
+    }]);
+    const newAssignments = {
+      ...assignments,
+      [bounty.id]: assignmentsList.reverse()
+    }
+    dispatch({type: 'SET_ASSIGNMENTS', payload: newAssignments});
+  }
+
   return (
     <NostrContext.Provider
-      value={{state, loadNostr, connectToRelay, getApplications, getBounties}}
+      value={{
+        connectToRelay,
+        loadNostr,
+        getApplications,
+        getAssignments,
+        getBounties,
+        state
+      }}
     >
       {children}
     </NostrContext.Provider>

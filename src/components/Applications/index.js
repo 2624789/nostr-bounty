@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 
 import { Button } from "./../Button";
 
-import { useNostrState } from "./../../nostr-context";
+import { useNostr } from "./../../nostr-context";
 
-import { parsePubKey, parseTimestamp } from "./../../utils";
+import { encodePubKey, parsePubKey, parseTimestamp } from "./../../utils";
 
 import style from "./style.module.scss";
 
-const Applications = ({applications, isAuthor, bountyId}) => {
-  const { connectedRelay, provider } = useNostrState();
+const Applications = ({applications, bounty, publicKey, assignment}) => {
+  const { state, getAssignments } = useNostr();
+  const { connectedRelay, provider } = state;
   const [pubResponse, setPubResponse] = useState("");
   const [isErrorResponse, setIsErrorResponse] = useState(false);
 
@@ -23,7 +24,12 @@ const Applications = ({applications, isAuthor, bountyId}) => {
     };
   }, [isErrorResponse]);
 
-  const assignBounty = async pubKey => {
+  const isAssigned = applicationId =>{
+    if(!assignment) return false;
+    return assignment.content === applicationId;
+  }
+
+  const assignBounty = async (pubKey, applicationId) => {
     setPubResponse("");
     setIsErrorResponse(false);
 
@@ -32,10 +38,10 @@ const Applications = ({applications, isAuthor, bountyId}) => {
       created_at: Math.floor(Date.now() / 1000),
       tags: [
         ["t", "bounty-assignment"],
-        ["e", bountyId],
+        ["e", bounty.id],
         ["p", pubKey]
       ],
-      content: pubKey,
+      content: applicationId,
     }
 
     try {
@@ -47,6 +53,7 @@ const Applications = ({applications, isAuthor, bountyId}) => {
         setPubResponse(
           `${connectedRelay.url} has published your assignment.`
         );
+        getAssignments(bounty.id, event.pubkey);
       })
       pub.on('failed', reason => {
         setIsErrorResponse(true);
@@ -65,7 +72,7 @@ const Applications = ({applications, isAuthor, bountyId}) => {
       <table>
         <tbody>
           {applications.map(a =>
-            <tr key={a.id}>
+            <tr key={a.id} className={isAssigned(a.id) ? style.assigned : null}>
               <td className={style.meta}>
                 <p>
                   <small>
@@ -76,15 +83,17 @@ const Applications = ({applications, isAuthor, bountyId}) => {
               </td>
               <td className={style.content}>
                 <p>{a.content}</p>
-                {isAuthor
-                  ? <div className={style.buttonContainer}>
-                      <Button
-                        label={"assign"}
-                        small
-                        onClick={() => assignBounty(a.pubkey)}
-                      />
-                    </div>
-                  : null
+                {isAssigned(a.id)
+                  ? <strong>Assigned</strong>
+                  : publicKey === encodePubKey(bounty.pubkey)
+                    ? <div className={style.buttonContainer}>
+                        <Button
+                          label={"assign"}
+                          small
+                          onClick={() => assignBounty(a.pubkey, a.id)}
+                        />
+                      </div>
+                    : null
                 }
               </td>
             </tr>

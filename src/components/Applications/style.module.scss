@@ -10,6 +10,10 @@
     border-collapse: collapse;
   }
 
+  .assigned {
+    background-color: $application-assigned-background;
+  }
+
   .meta {
     padding: 0.3rem;
     width: 25%;
