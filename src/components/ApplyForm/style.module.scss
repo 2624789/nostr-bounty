@@ -1,0 +1,29 @@
+@import '../../styles/_variables.scss';
+
+.applyForm {
+  fieldset {
+    margin-top: 0.5rem;
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      .error {
+        color: $text-color-error;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .buttonContainer {
+        margin-top: 0.5rem;
+        display: flex;
+
+        p {
+          margin-left: 0.5rem;
+        }
+      }
+    }
+  }
+}

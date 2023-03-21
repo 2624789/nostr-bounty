@@ -2,18 +2,30 @@ import { useState } from "react";
 
 import { nip19 } from 'nostr-tools';
 
+import { ApplyForm } from "./../ApplyForm";
 import { Button } from "./../Button";
 
 import { useNostrState } from "./../../nostr-context";
 
 import style from './style.module.scss';
 
-const BountyDetails = ({data, onClose}) => {
+const BountyDetails = ({event, onClose}) => {
+  const { content } = event;
+  const data = JSON.parse(content);
+  const { publicKey } = useNostrState();
+
+  const isAuthor = publicKey === nip19.npubEncode(event.pubkey);
+
   return(
     <div className={style.details}>
       <div className={style.terms}>
         <h4 className={style.title}>Terms</h4>
         <p>{data.terms}</p>
+      </div>
+      <div className={style.terms}>
+        <h4 className={style.title}>Applications</h4>
+        <p>No applications yet.</p>
+        {!isAuthor ? <ApplyForm bountyId={event.id} /> : null}
       </div>
       <div className={style.bottom}>
         <Button
@@ -97,7 +109,7 @@ const Bounty = ({bountyEvent}) => {
           </div>
         : isValidBounty
           ? <BountyDetails
-              data={bountyData}
+              event={bountyEvent}
               onClose={() => setIsExpanded(false)}
             />
           : <UnknownBounty
