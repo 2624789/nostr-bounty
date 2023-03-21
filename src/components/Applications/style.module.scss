@@ -17,5 +17,22 @@
 
   .content {
     padding: 0.3rem;
+
+    .buttonContainer {
+      display: flex;
+      margin-top: 0.3rem;
+
+      p {
+        margin-left: 0.5rem;
+
+        &.error {
+          color: $text-color-error;
+        }
+
+        &.success {
+          color: green;
+        }
+      }
+    }
   }
 }

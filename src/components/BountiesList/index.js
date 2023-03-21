@@ -30,7 +30,11 @@ const BountyDetails = ({event, onClose}) => {
       <div className={style.section}>
         <h4 className={style.title}>Applications</h4>
         {applications[event.id]?.length > 0
-          ? <Applications applications={applications[event.id]} />
+          ? <Applications
+              applications={applications[event.id]}
+              bountyId={event.id}
+              isAuthor={isAuthor}
+            />
           : <p>No applications yet.</p>
         }
         {!isAuthor ? <ApplyForm bountyId={event.id} /> : null}
