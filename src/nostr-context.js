@@ -8,6 +8,7 @@ import React, {
 import { nip19, relayInit } from 'nostr-tools';
 
 const initialState = {
+  applications: {},
   publicKey: "",
   relays: [],
   provider: undefined,
@@ -17,6 +18,8 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_APPLICATIONS':
+      return { ...state, applications: action.payload }
     case 'SET_BOUNTIES':
       return { ...state, bounties: action.payload }
     case 'SET_CONNECTED_RELAY':
@@ -35,6 +38,8 @@ const reducer = (state, action) => {
 const defaultContext = {
   state: initialState,
   connectToRelay: async () => {},
+  getApplications: async () => {},
+  getBounties: async () => {},
   loadNostr: async () => {},
 }
 
@@ -42,7 +47,7 @@ const NostrContext = createContext(defaultContext);
 
 const NostrContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { provider, connectedRelay } = state;
+  const { applications, connectedRelay, provider } = state;
 
   useEffect(() => {
     if(provider && provider === window.nostr) {
@@ -102,8 +107,23 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_BOUNTIES', payload: bounties.reverse()});
   }
 
+  const getApplications = async bountyId => {
+    const applicationsList = await connectedRelay.list([{
+      "kinds": [1],
+      "#e": [bountyId],
+      "#t": ["bounty-application"],
+    }]);
+    const newApplications = {
+      ...applications,
+      [bountyId]: applicationsList.reverse()
+    }
+    dispatch({type: 'SET_APPLICATIONS', payload: newApplications});
+  }
+
   return (
-    <NostrContext.Provider value={{state, loadNostr, connectToRelay, getBounties}}>
+    <NostrContext.Provider
+      value={{state, loadNostr, connectToRelay, getApplications, getBounties}}
+    >
       {children}
     </NostrContext.Provider>
   )

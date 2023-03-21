@@ -1,30 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { nip19 } from 'nostr-tools';
-
+import { Applications } from "./../Applications";
 import { ApplyForm } from "./../ApplyForm";
 import { Button } from "./../Button";
 
-import { useNostrState } from "./../../nostr-context";
+import { useNostr, useNostrState } from "./../../nostr-context";
+import { encodePubKey, parsePubKey, parseTimestamp } from "./../../utils";
 
 import style from './style.module.scss';
 
 const BountyDetails = ({event, onClose}) => {
   const { content } = event;
   const data = JSON.parse(content);
-  const { publicKey } = useNostrState();
+  const { state, getApplications } = useNostr();
+  const { publicKey, applications } = state;
 
-  const isAuthor = publicKey === nip19.npubEncode(event.pubkey);
+  const isAuthor = publicKey === encodePubKey(event.pubkey);
+
+  useEffect(() => {
+    getApplications(event.id);
+  }, []);
 
   return(
     <div className={style.details}>
-      <div className={style.terms}>
+      <div className={style.section}>
         <h4 className={style.title}>Terms</h4>
         <p>{data.terms}</p>
       </div>
-      <div className={style.terms}>
+      <div className={style.section}>
         <h4 className={style.title}>Applications</h4>
-        <p>No applications yet.</p>
+        {applications[event.id]?.length > 0
+          ? <Applications applications={applications[event.id]} />
+          : <p>No applications yet.</p>
+        }
         {!isAuthor ? <ApplyForm bountyId={event.id} /> : null}
       </div>
       <div className={style.bottom}>
@@ -62,15 +70,6 @@ const Bounty = ({bountyEvent}) => {
     'terms' in bountyData;
 
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const parseTimestamp = timestamp => {
-    return new Date(timestamp * 1000).toLocaleString();
-  }
-
-  const parsePubKey = pubkey => {
-    const npub = nip19.npubEncode(pubkey);
-    return npub.slice(0,8) + "..." + npub.slice(-4);
-  }
 
   return(
     <div className={style.bounty}>

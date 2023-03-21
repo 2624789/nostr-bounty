@@ -4,13 +4,14 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "./../Button";
 
-import { useNostrState } from "./../../nostr-context";
+import { useNostr } from "./../../nostr-context";
 
 import style from './style.module.scss';
 
 const ApplyForm = ({bountyId}) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const { connectedRelay, provider } = useNostrState();
+  const { state, getApplications } = useNostr();
+  const { connectedRelay, provider } = state;
   const [pubResponse, setPubResponse] = useState("");
   const [isErrorResponse, setIsErrorResponse] = useState(false);
 
@@ -44,6 +45,7 @@ const ApplyForm = ({bountyId}) => {
         setPubResponse(
           `${connectedRelay.url} has published your application.`
         );
+        getApplications(bountyId);
         reset();
       })
       pub.on('failed', reason => {
