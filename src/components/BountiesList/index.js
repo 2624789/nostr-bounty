@@ -1,8 +1,45 @@
+import { useState } from "react";
+
 import { nip19 } from 'nostr-tools';
+
+import { Button } from "./../Button";
 
 import { useNostrState } from "./../../nostr-context";
 
 import style from './style.module.scss';
+
+const BountyDetails = ({data, onClose}) => {
+  return(
+    <div className={style.details}>
+      <div className={style.terms}>
+        <h4 className={style.title}>Terms</h4>
+        <p>{data.terms}</p>
+      </div>
+      <div className={style.bottom}>
+        <Button
+          label={"less"}
+          small
+          onClick={onClose}
+        />
+      </div>
+    </div>
+  );
+}
+
+const UnknownBounty = ({content, onClose}) => {
+  return(
+    <div className={style.details}>
+      <p>{content}</p>
+      <div className={style.bottom}>
+        <Button
+          label={"less"}
+          small
+          onClick={onClose}
+        />
+      </div>
+    </div>
+  );
+}
 
 const Bounty = ({bountyEvent}) => {
   const { content } = bountyEvent;
@@ -11,6 +48,8 @@ const Bounty = ({bountyEvent}) => {
     'title' in bountyData &&
     'amount' in bountyData &&
     'terms' in bountyData;
+
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const parseTimestamp = timestamp => {
     return new Date(timestamp * 1000).toLocaleString();
@@ -48,11 +87,23 @@ const Bounty = ({bountyEvent}) => {
           </p>
         </div>
       </div>
-      {isValidBounty
-        ? <div className={style.body}>
-            <p className={style.terms}>{bountyData.terms}</p>
+      {!isExpanded
+        ? <div className={style.footer}>
+            <Button
+              label={"more"}
+              small
+              onClick={() => setIsExpanded(true)}
+            />
           </div>
-        : null
+        : isValidBounty
+          ? <BountyDetails
+              data={bountyData}
+              onClose={() => setIsExpanded(false)}
+            />
+          : <UnknownBounty
+              content={content}
+              onClose={() => setIsExpanded(false)}
+            />
       }
     </div>
   );
