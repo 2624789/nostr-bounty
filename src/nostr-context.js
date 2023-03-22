@@ -10,6 +10,7 @@ import { nip19, relayInit } from 'nostr-tools';
 const initialState = {
   applications: {},
   assignments: {},
+  deliverables: {},
   publicKey: "",
   relays: [],
   provider: undefined,
@@ -27,6 +28,8 @@ const reducer = (state, action) => {
       return { ...state, bounties: action.payload }
     case 'SET_CONNECTED_RELAY':
       return { ...state, connectedRelay: action.payload }
+    case 'SET_DELIVERABLES':
+      return { ...state, deliverables: action.payload }
     case 'SET_PUBLIC_KEY':
       return { ...state, publicKey: action.payload }
     case 'SET_RELAYS':
@@ -44,6 +47,7 @@ const defaultContext = {
   getApplications: async () => {},
   getAssignments: async () => {},
   getBounties: async () => {},
+  getDeliverables: async () => {},
   loadNostr: async () => {},
 }
 
@@ -51,7 +55,13 @@ const NostrContext = createContext(defaultContext);
 
 const NostrContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { applications, assignments, connectedRelay, provider } = state;
+  const {
+    applications,
+    assignments,
+    connectedRelay,
+    deliverables,
+    provider
+  } = state;
 
   useEffect(() => {
     if(provider && provider === window.nostr) {
@@ -138,6 +148,20 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_ASSIGNMENTS', payload: newAssignments});
   }
 
+  const getDeliverables = async (bountyId, assignee) => {
+    const deliverablesList = await connectedRelay.list([{
+      "authors": [assignee],
+      "kinds": [1],
+      "#e": [bountyId],
+      "#t": ["bounty-deliverable"],
+    }]);
+    const newDeliverables = {
+      ...deliverables,
+      [bountyId]: deliverablesList.reverse()
+    }
+    dispatch({type: 'SET_DELIVERABLES', payload: newDeliverables});
+  }
+
   return (
     <NostrContext.Provider
       value={{
@@ -146,6 +170,7 @@ const NostrContextProvider = ({children}) => {
         getApplications,
         getAssignments,
         getBounties,
+        getDeliverables,
         state
       }}
     >
