@@ -53,7 +53,7 @@ const Applications = ({applications, bounty, publicKey, assignment}) => {
         setPubResponse(
           `${connectedRelay.url} has published your assignment.`
         );
-        getAssignments(bounty.id, event.pubkey);
+        getAssignments(bounty);
       })
       pub.on('failed', reason => {
         setIsErrorResponse(true);

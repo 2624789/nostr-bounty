@@ -124,7 +124,7 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_APPLICATIONS', payload: newApplications});
   }
 
-  const getAssignments = async (bounty) => {
+  const getAssignments = async bounty => {
     const assignmentsList = await connectedRelay.list([{
       "authors": [bounty.pubkey],
       "kinds": [1],
