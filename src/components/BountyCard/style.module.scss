@@ -1,0 +1,46 @@
+@import '../../styles/_variables.scss';
+
+.bountyCard {
+  display: flex;
+  flex-direction: column;
+  background-color: $bounty-background-color;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  padding: 0.5rem;
+
+  h3, h4, p { margin: 0; }
+
+  .header {
+    display: flex;
+
+    .left {
+      width: 70%;
+      text-align: left;
+    };
+
+    .right {
+      width: 30%;
+      text-align: right;
+    }
+
+    .title {
+      color: $bounty-title-color; 
+    }
+
+    .amount {
+      color: $bounty-amount-color; 
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.unknownBounty {
+  .bottom {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
