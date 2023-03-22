@@ -7,6 +7,7 @@ import { ApplyForm } from "./../ApplyForm";
 import { Button } from "./../Button";
 import { Deliverables } from "./../Deliverables";
 import { DeliverableForm } from "./../DeliverableForm";
+import { PaymentForm } from "./../PaymentForm";
 
 import {
   encodePubKey,
@@ -24,9 +25,16 @@ const BountyDetails = ({bounty, onClose}) => {
     state,
     getApplications,
     getAssignments,
-    getDeliverables
+    getDeliverables,
+    getPayments
   } = useNostr();
-  const { applications, assignments, deliverables, publicKey } = state;
+  const {
+    applications,
+    assignments,
+    deliverables,
+    payments,
+    publicKey
+  } = state;
 
   const isAuthor = publicKey === encodePubKey(bounty.pubkey);
   const assignmentEvent = assignments[bounty.id]?.length > 0
@@ -46,12 +54,22 @@ const BountyDetails = ({bounty, onClose}) => {
   useEffect(() => {
     getApplications(bounty.id);
     getAssignments(bounty);
+    getPayments(bounty);
   // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if(assignee) getDeliverables(bounty.id, assignee);
-  }, [assignments])
+  }, [assignments]);
+
+  const renderPayments = () => {
+    return payments[bounty.id].map(p =>
+      <p key={p.id}>
+        <small>{parseTimestamp(p.created_at)}: </small>
+        {p.content} sats to {parsePubKey(getEventTag("p", p.tags))}
+      </p>
+    );
+  }
 
   return(
     <div className={style.bountyDetails}>
@@ -64,6 +82,17 @@ const BountyDetails = ({bounty, onClose}) => {
           <strong>Assigned to</strong>{' '}
           {assignee ? `${assignedTo} at ${assignedAt}` : "none yet."}
         </p>
+      </div>
+      <div className={style.section}>
+        <h4 className={style.title}>Payments</h4>
+        {payments[bounty.id]?.length > 0
+          ? renderPayments()
+          : <p>No payments yet.</p>
+        }
+        {isAuthor
+          ? <PaymentForm bounty={bounty} assignee={assignee} />
+          : null
+        }
       </div>
       <div className={style.section}>
         <h4 className={style.title}>Deliverables</h4>

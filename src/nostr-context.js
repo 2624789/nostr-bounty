@@ -11,6 +11,7 @@ const initialState = {
   applications: {},
   assignments: {},
   deliverables: {},
+  payments: {},
   publicKey: "",
   relays: [],
   provider: undefined,
@@ -30,6 +31,8 @@ const reducer = (state, action) => {
       return { ...state, connectedRelay: action.payload }
     case 'SET_DELIVERABLES':
       return { ...state, deliverables: action.payload }
+    case 'SET_PAYMENTS':
+      return { ...state, payments: action.payload }
     case 'SET_PUBLIC_KEY':
       return { ...state, publicKey: action.payload }
     case 'SET_RELAYS':
@@ -48,6 +51,7 @@ const defaultContext = {
   getAssignments: async () => {},
   getBounties: async () => {},
   getDeliverables: async () => {},
+  getPayments: async () => {},
   loadNostr: async () => {},
 }
 
@@ -60,6 +64,7 @@ const NostrContextProvider = ({children}) => {
     assignments,
     connectedRelay,
     deliverables,
+    payments,
     provider
   } = state;
 
@@ -162,6 +167,20 @@ const NostrContextProvider = ({children}) => {
     dispatch({type: 'SET_DELIVERABLES', payload: newDeliverables});
   }
 
+  const getPayments = async bounty => {
+    const paymentsList = await connectedRelay.list([{
+      "authors": [bounty.pubkey],
+      "kinds": [1],
+      "#e": [bounty.id],
+      "#t": ["bounty-payment"],
+    }]);
+    const newPayments = {
+      ...payments,
+      [bounty.id]: paymentsList.reverse()
+    }
+    dispatch({type: 'SET_PAYMENTS', payload: newPayments});
+  }
+
   return (
     <NostrContext.Provider
       value={{
@@ -171,6 +190,7 @@ const NostrContextProvider = ({children}) => {
         getAssignments,
         getBounties,
         getDeliverables,
+        getPayments,
         state
       }}
     >
