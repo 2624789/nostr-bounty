@@ -1,15 +1,27 @@
-import { useNostrState } from "./../../nostr-context";
+import { useNostr } from "./../../nostr-context";
 
 import { BountyCard } from "./../BountyCard";
+import { Button } from "./../Button";
 
 import style from './style.module.scss';
 
 const BountiesList = () => {
-  const { bounties, connectedRelay } = useNostrState();
+  const { state, getBounties } = useNostr();
+  const { bounties, connectedRelay } = state;
 
   return (
     <fieldset className={style.bountiesList}>
-      <legend><strong>Bounties</strong></legend>
+      <legend>
+        <strong>Bounties </strong>
+        {connectedRelay
+          ? <Button
+              label={"refresh"}
+              small
+              onClick={() => getBounties()}
+            />
+          : null
+        }
+      </legend>
       {connectedRelay
         ? bounties.length > 0
             ? (bounties.map(bounty =>

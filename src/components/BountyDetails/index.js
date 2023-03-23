@@ -60,6 +60,7 @@ const BountyDetails = ({bounty, onClose}) => {
 
   useEffect(() => {
     if(assignee) getDeliverables(bounty.id, assignee);
+  // eslint-disable-next-line
   }, [assignments]);
 
   const renderPayments = () => {
