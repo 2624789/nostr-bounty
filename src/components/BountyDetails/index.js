@@ -52,9 +52,7 @@ const BountyDetails = ({bounty, onClose}) => {
     : null;
 
   useEffect(() => {
-    getApplications(bounty.id);
-    getAssignments(bounty);
-    getPayments(bounty);
+    onRefresh();
   // eslint-disable-next-line
   }, []);
 
@@ -62,6 +60,12 @@ const BountyDetails = ({bounty, onClose}) => {
     if(assignee) getDeliverables(bounty.id, assignee);
   // eslint-disable-next-line
   }, [assignments]);
+
+  const onRefresh = () => {
+    getApplications(bounty.id);
+    getAssignments(bounty);
+    getPayments(bounty);
+  }
 
   const renderPayments = () => {
     return payments[bounty.id].map(p =>
@@ -74,6 +78,13 @@ const BountyDetails = ({bounty, onClose}) => {
 
   return(
     <div className={style.bountyDetails}>
+      <div className={style.section}>
+        <Button
+          label={"refresh"}
+          small
+          onClick={onRefresh}
+        />
+      </div>
       <div className={style.section}>
         <h4 className={style.title}>Terms</h4>
         <p>{data.terms}</p>
