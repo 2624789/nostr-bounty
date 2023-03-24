@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/nostr-bounty/static/css/main.3b9e17a1.css",
-    "main.js": "/nostr-bounty/static/js/main.095b6ca4.js",
-    "static/js/787.fc02260f.chunk.js": "/nostr-bounty/static/js/787.fc02260f.chunk.js",
-    "index.html": "/nostr-bounty/index.html",
-    "main.3b9e17a1.css.map": "/nostr-bounty/static/css/main.3b9e17a1.css.map",
-    "main.095b6ca4.js.map": "/nostr-bounty/static/js/main.095b6ca4.js.map",
-    "787.fc02260f.chunk.js.map": "/nostr-bounty/static/js/787.fc02260f.chunk.js.map"
+    "main.css": "/static/css/main.3b9e17a1.css",
+    "main.js": "/static/js/main.ab5bb8b5.js",
+    "static/js/787.fc02260f.chunk.js": "/static/js/787.fc02260f.chunk.js",
+    "index.html": "/index.html",
+    "main.3b9e17a1.css.map": "/static/css/main.3b9e17a1.css.map",
+    "main.ab5bb8b5.js.map": "/static/js/main.ab5bb8b5.js.map",
+    "787.fc02260f.chunk.js.map": "/static/js/787.fc02260f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3b9e17a1.css",
-    "static/js/main.095b6ca4.js"
+    "static/js/main.ab5bb8b5.js"
   ]
 }
