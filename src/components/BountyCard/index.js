@@ -24,7 +24,14 @@ const UnknownBounty = ({bounty, onClose}) => {
 
 const BountyCard = ({bounty}) => {
   const { content } = bounty;
-  const data = JSON.parse(content);
+
+  let data;
+  try {
+    data = JSON.parse(content);
+  } catch {
+    data = {};
+  }
+
   const isValidBounty =
     'title' in data &&
     'amount' in data &&
